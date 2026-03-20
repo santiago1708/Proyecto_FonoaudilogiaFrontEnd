@@ -26,3 +26,26 @@ export const ConfirmTokenSchema = z.object({
 });
 
 export type ConfirmToken = z.infer<typeof ConfirmTokenSchema>;
+
+
+export const KidRegistrationSchema = z.object({
+    name: z.string().min(2, 'El nombre es obligatorio'),
+    fechaNacimiento: z.string().min(1, 'La fecha de nacimiento es obligatoria'),
+    genero: z.enum(['Masculino', 'Femenino'], 'Selecciona un sexo válido'),
+    // Lo dejamos como string para que React Hook Form no se pelee con el <select>
+    escolarizacion: z.string().min(1, 'Selecciona una opción'),
+    observaciones: z.string().optional()
+});
+
+export type KidRegistrationForm = z.infer<typeof KidRegistrationSchema>;
+
+
+export type Kid = {
+    id: number; // o string, dependiendo de cómo lo tengas en tu base de datos
+    name: string;
+    fechaNacimiento: string;
+    genero: string;
+    escolarizacion: boolean;
+    observaciones?: string;
+    edadCalculada?: string; // Este es el campo virtual que creaste en tu backend genial
+};
