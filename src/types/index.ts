@@ -49,3 +49,37 @@ export type Kid = {
     observaciones?: string;
     edadCalculada?: string; // Este es el campo virtual que creaste en tu backend genial
 };
+
+export type TestHistory = {
+    id: number;
+    puntaje: number;
+    clasificacion: string;
+    edadAlMomento: string;
+    createdAt: string;
+};
+
+export const UserSchema = z.object({
+    id: z.number().or(z.string()),
+    name: z.string(),
+    email: z.string(),
+    parentesco: z.string()
+});
+
+export type User = z.infer<typeof UserSchema>;
+
+
+export const EvaluationFormSchema = z.object({
+    q1: z.string({ message: 'Selecciona una opción' }),
+    q2: z.string({ message: 'Selecciona una opción' }),
+    q3: z.string({ message: 'Selecciona una opción' }),
+    q4: z.string({ message: 'Selecciona una opción' }),
+    q5: z.string({ message: 'Selecciona una opción' }),
+    q6: z.string({ message: 'Selecciona una opción' }),
+    q7: z.string({ message: 'Selecciona una opción' }),
+    q8: z.string({ message: 'Selecciona una opción' }),
+    q9: z.string({ message: 'Selecciona una opción' }),
+    q10: z.string({ message: 'Selecciona una opción' }),
+});
+
+export type EvaluationForm = z.infer<typeof EvaluationFormSchema>;
+

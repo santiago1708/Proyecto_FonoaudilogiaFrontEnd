@@ -55,4 +55,14 @@ export async function confirmAccount(formData: ConfirmToken) {
 }
 
 
-
+export async function getUser() {
+    try {
+        const { data } = await api.get('/auth/profile');
+        return data;
+    } catch (error) {
+        if (isAxiosError(error) && error.response) {
+            throw new Error(error.response.data.error || 'Error al obtener el usuario');
+        }
+        throw new Error('Hubo un error en el servidor');
+    }
+}
