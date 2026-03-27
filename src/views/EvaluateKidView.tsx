@@ -4,6 +4,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { getTestsForKid, submitEvaluation } from '../api/KidAPI';
 import ErrorMessage from '../components/ErrorMessages';
+import EvaluateKidSkeleton from '../components/EvaluateKidSkeleton';
 
 // --- DEFINICIÓN DE TIPOS PARA TS ---
 interface Opcion {
@@ -55,7 +56,7 @@ export default function EvaluateKidView() {
         }
     });
 
-    if (isLoading) return <p className="text-center py-20 font-bold">Cargando cuestionario adecuado...</p>;
+    if (isLoading) return <EvaluateKidSkeleton />;
     if (isError || !data?.testsDisponibles?.length) return <p className="text-center py-20 text-red-500">No se encontraron tests disponibles para la edad del niño.</p>;
 
     const activeTest = data.testsDisponibles[0];

@@ -24,8 +24,47 @@ export default function AppLayout() {
     if (!token) return <Navigate to="/login" />;
 
     // 2. Mientras carga la petición, mostramos una pantalla de carga
-    if (isLoading) return <div className="min-h-screen flex items-center justify-center text-xl font-bold text-gray-500">Cargando perfil...</div>;
+    if (isLoading) return (
+        <div className="min-h-screen bg-gray-50 animate-pulse">
+            {/* Skeleton del Navbar */}
+            <header className="bg-blue-600 shadow-md">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+                    {/* Simula el Logo */}
+                    <div className="h-8 bg-blue-500/50 rounded w-48"></div>
 
+                    <div className="flex items-center gap-6">
+                        {/* Simula la información del usuario (Nombre y Rol) */}
+                        <div className="text-right flex flex-col items-end gap-2 mt-2 md:mt-0">
+                            <div className="h-4 bg-blue-500/50 rounded w-32"></div>
+                            <div className="h-3 bg-blue-500/50 rounded w-20"></div>
+                        </div>
+
+                        <div className="flex items-center gap-4">
+                            {/* Simula el botón "Mi Perfil" */}
+                            <div className="h-10 bg-gray-200/50 rounded-lg w-28 hidden md:block"></div>
+                            {/* Simula el botón "Cerrar Sesión" */}
+                            <div className="h-10 bg-blue-700/50 rounded-lg w-32 hidden md:block"></div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            {/* Skeleton del Contenido Principal (Simula el Dashboard) */}
+            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+                <div className="space-y-6">
+                    <div className="h-10 bg-gray-200 rounded w-64 mb-2"></div>
+                    <div className="h-6 bg-gray-200 rounded w-96 mb-8"></div>
+
+                    {/* Malla de tarjetas fantasmas */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+                        {[...Array(6)].map((_, i) => (
+                            <div key={i} className="h-64 bg-gray-200 rounded-2xl"></div>
+                        ))}
+                    </div>
+                </div>
+            </main>
+        </div>
+    );
     // 3. Si el token expiró o es inválido (isError), lo mandamos al login
     if (isError) {
         localStorage.removeItem('AUTH_TOKEN');

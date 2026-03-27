@@ -12,7 +12,7 @@ export async function registerKid(formData: KidRegistrationForm) {
 
         // Enviamos el payload corregido al backend
         const { data } = await api.post('/kid/add-kid', payload);
-        return data; 
+        return data;
     } catch (error) {
         if (isAxiosError(error) && error.response) {
             if (error.response.data.errors) {
@@ -31,7 +31,7 @@ export async function getKids() {
     try {
         // Hacemos un GET a la ruta de niños (Asegúrate de que esta sea la ruta correcta de tu backend)
         const { data } = await api.get('/kid/get-kids');
-        return data; 
+        return data;
     } catch (error) {
         if (isAxiosError(error) && error.response) {
             throw new Error(error.response.data.error || 'Error al obtener los pacientes');
@@ -43,7 +43,7 @@ export async function getKids() {
 export async function getKidById(id: string) {
     try {
         const { data } = await api.get(`/Kid/get-kid/${id}`);
-        return data; 
+        return data;
     } catch (error) {
         if (isAxiosError(error) && error.response) {
             throw new Error(error.response.data.error || 'Error al obtener el perfil');
@@ -56,7 +56,7 @@ export async function getKidHistory(id: string) {
     try {
         // Asegúrate de que esta URL coincida con la ruta de tu backend para el historial
         const { data } = await api.get(`/evaluacion/history/kid/${id}`);
-        return data; 
+        return data;
     } catch (error) {
         if (isAxiosError(error) && error.response) {
             throw new Error(error.response.data.error || 'Error al obtener el historial');
@@ -93,4 +93,37 @@ export async function submitEvaluation({ kidId, testId, respuestas }: Evaluation
 export async function getTestsForKid(id: string) {
     const { data } = await api.get(`/test/get-tests/kid/${id}`); // Ajusta a tu ruta real
     return data;
+}
+
+type updateKidParams = {
+    name: string;
+    fechaNacimiento: string;
+    genero: string;
+    escolarizacion: boolean;
+    observaciones?: string;
+}
+
+export async function updateKid({ id, formData }: { id: number, formData: updateKidParams }) {
+    try {
+        const { data } = await api.put(`/kid/update-kid/${id}`, formData); // Ajusta la ruta según tu backend
+        return data;
+    } catch (error) {
+        if (isAxiosError(error) && error.response) {
+            throw new Error(error.response.data.error);
+        }
+        throw new Error('Error al actualizar el paciente');
+    }
+}
+
+// Eliminar un paciente
+export async function deleteKid(id: string) {
+    try {
+        const { data } = await api.delete(`/kid/delete-kid/${id}`); // Ajusta la ruta según tu backend
+        return data;
+    } catch (error) {
+        if (isAxiosError(error) && error.response) {
+            throw new Error(error.response.data.error);
+        }
+        throw new Error('Error al eliminar el paciente');
+    }
 }

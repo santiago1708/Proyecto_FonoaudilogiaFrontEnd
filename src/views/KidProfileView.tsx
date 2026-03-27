@@ -1,11 +1,17 @@
-import { useParams, Link } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-import { getKidById, getKidHistory } from '../api/KidAPI';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { deleteKid, getKidById, getKidHistory } from '../api/KidAPI';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import type { TestHistory } from '../types';
+import { toast } from 'sonner';
+import { useState } from 'react';
+import ConfirmDeleteModal from '../components/ConfimDeleteModal';
+import TestCardSkeleton from '../components/TestCardSkeleton';
 
 export default function KidProfileView() {
     const { id } = useParams<{ id: string }>();
+    const navigate = useNavigate();
+    const queryClient = useQueryClient();
 
     // Traemos los datos del niño
     const { data: kid, isLoading: isLoadingKid } = useQuery({
@@ -21,7 +27,46 @@ export default function KidProfileView() {
         enabled: !!id
     });
 
-    if (isLoadingKid || isLoadingHistory) return <p className="text-center py-20 font-bold text-xl text-gray-500">Cargando perfil...</p>;
+    const { mutate: deleteKidMutation } = useMutation({
+        mutationFn: deleteKid,
+        onError: (error: Error) => toast.error(error.message),
+        onSuccess: () => {
+            toast.success('Paciente eliminado correctamente');
+            queryClient.invalidateQueries({ queryKey: ['kids'] }); // Refresca la lista del dashboard
+            navigate('/dashboard'); // Lo mandamos al inicio
+        }
+    });
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const handleDeleteClick = () => {
+        setIsModalOpen(true);
+    };
+
+
+    if (isLoadingKid || isLoadingHistory) return (
+        <div className="max-w-5xl mx-auto space-y-8 animate-pulse">
+            {/* Esqueleto del Encabezado */}
+            <div className="bg-white p-6 rounded-2xl shadow-sm border h-32 flex flex-col justify-center">
+                <div className="h-4 bg-gray-200 rounded w-32 mb-4"></div>
+                <div className="h-8 bg-gray-200 rounded w-1/3 mb-2"></div>
+                <div className="h-4 bg-gray-200 rounded w-1/4"></div>
+            </div>
+
+            {/* Esqueleto de la Gráfica */}
+            <div className="bg-white p-8 rounded-2xl shadow-sm border h-96 flex items-center justify-center">
+                <div className="w-full h-full bg-gray-100 rounded-xl"></div>
+            </div>
+
+            <div className="space-y-4">
+                <div className="h-8 bg-gray-200 rounded w-64 mb-6"></div> {/* Título "Historial de Evaluaciones" */}
+                
+                {/* Mostramos 3 tarjetas de test falsas */}
+                {[...Array(3)].map((_, i) => (
+                    <TestCardSkeleton key={i} />
+                ))}
+            </div>
+        </div>
+    );
 
     // Preparamos los datos para la gráfica de Recharts (invertimos para ver del más antiguo al más reciente)
     const chartData = history?.map((test: TestHistory) => ({
@@ -32,12 +77,16 @@ export default function KidProfileView() {
     const dynamicYAxisTicks = Array.from(new Set(chartData.map((item: { puntaje: number }) => item.puntaje)))
         .sort((a, b) => (a as number) - (b as number)) as number[];
 
-    console.log(chartData)
+
+
+    const confirmDelete = () => {
+        deleteKidMutation(id!);
+    };
 
     return (
         <div className="max-w-6xl mx-auto space-y-8">
             {/* ENCABEZADO Y BOTÓN DE NUEVO TEST */}
-            <div className="bg-white p-6 rounded-2xl shadow-sm border flex flex-col md:flex-row justify-between items-center gap-4">
+            <div className="bg-white p-6 rounded-2xl shadow-sm border flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
                     <Link to="/dashboard" className="text-blue-600 hover:underline font-semibold text-sm mb-2 block">
                         &larr; Volver a Mis Pacientes
@@ -45,18 +94,37 @@ export default function KidProfileView() {
                     <h1 className="text-3xl font-black text-gray-800">{kid?.nombre}</h1>
                     <p className="text-gray-500 mt-1">
                         Edad actual: <span className="font-bold">{kid?.edadCalculada}</span> | Escolarizado: <span className="font-bold">{kid?.escolarizado ? 'Sí' : 'No'}</span>
+                        {kid.observaciones && (
+                            <span className="block mt-2 text-sm text-gray-600">
+                                Observaciones: {kid.observaciones}
+                            </span>
+                        )}
                     </p>
                 </div>
 
-                <Link
-                    to={`/dashboard/kid/${id}/evaluate`}
-                    className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-sm hover:shadow-md w-full md:w-auto text-center flex items-center justify-center gap-2"
-                >
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-5 h-5">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                    </svg>
-                    Realizar Evaluación
-                </Link>
+                {/* BOTONES DE ACCIÓN */}
+                <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+                    <Link
+                        to={`/dashboard/kid/${id}/edit`} // <-- Ruta que crearemos enseguida
+                        className="bg-blue-50 text-blue-600 hover:bg-blue-100 px-4 py-2 rounded-xl font-bold transition-colors text-center border border-blue-200"
+                    >
+                        Editar
+                    </Link>
+
+                    <button
+                        onClick={handleDeleteClick}
+                        className="bg-red-50 text-red-600 hover:bg-red-100 px-4 py-2 rounded-xl font-bold transition-colors text-center border border-red-200"
+                    >
+                        Eliminar
+                    </button>
+
+                    <Link
+                        to={`/dashboard/kid/${id}/evaluate`}
+                        className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2 rounded-xl font-bold transition-all shadow-sm hover:shadow-md text-center flex items-center justify-center gap-2"
+                    >
+                        Realizar Evaluación
+                    </Link>
+                </div>
             </div>
 
             {/* GRÁFICA EVOLUTIVA */}
@@ -154,6 +222,12 @@ export default function KidProfileView() {
                     <p className="text-gray-500 text-center py-10">Aún no se ha realizado ninguna evaluación.</p>
                 )}
             </div>
+            <ConfirmDeleteModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onConfirm={confirmDelete}
+                kidName={kid?.nombre}
+            />
         </div>
     );
 }

@@ -64,9 +64,12 @@ export default function LoginView() {
                 />
             </form>
 
-            <nav className="mt-8 text-center">
+            <nav className="mt-6 text-center">
                 <Link to="/register" className="text-gray-500 hover:text-blue-600">
                     ¿No tienes cuenta? Crea una aquí
+                </Link>
+                <Link to="/auth/forgot-password" className="text-sm text-gray-500 hover:text-blue-600 block mt-1">
+                    ¿Olvidaste tu contraseña?
                 </Link>
             </nav>
         </>

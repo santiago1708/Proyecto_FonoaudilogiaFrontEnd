@@ -94,3 +94,18 @@ export const UpdatePasswordSchema = z.object({
 });
 
 export type UpdatePasswordForm = z.infer<typeof UpdatePasswordSchema>;
+
+export const ForgotPasswordSchema = z.object({
+    email: z.string().email('El formato del correo no es válido'),
+});
+export type ForgotPasswordForm = z.infer<typeof ForgotPasswordSchema>;
+
+export const ResetPasswordSchema = z.object({
+    token: z.string().min(6, 'El código/token debe tener al menos 6 caracteres'),
+    password: z.string().min(8, 'La nueva contraseña debe tener al menos 8 caracteres'),
+    confirmPassword: z.string()
+}).refine((data) => data.password === data.confirmPassword, {
+    message: "Las contraseñas no coinciden",
+    path: ["confirmPassword"],
+});
+export type ResetPasswordForm = z.infer<typeof ResetPasswordSchema>;

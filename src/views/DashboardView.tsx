@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { getKids } from '../api/KidAPI';
 import type { Kid } from '../types';
+import KidCardSkeleton from '../components/KidCardSkeleton';
 
 export default function DashboardView() {
     // useQuery se encarga de llamar a la API, manejar el loading y guardar los datos en caché
@@ -10,7 +11,20 @@ export default function DashboardView() {
         queryFn: getKids
     });
 
-    if (isLoading) return <p className="text-center text-gray-500 py-20 font-bold text-xl">Cargando pacientes...</p>;
+    if (isLoading) return (
+        <div className="space-y-6">
+            <h1 className="text-4xl font-black text-gray-800">Mis Pacientes / Hijos</h1>
+            <p className="text-xl font-light text-gray-500">Cargando tu lista de pacientes...</p>
+            
+            {/* Grid de Skeletons */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+                {/* Creamos un array de 6 elementos vacíos solo para iterar y mostrar 6 tarjetas */}
+                {[...Array(6)].map((_, i) => (
+                    <KidCardSkeleton key={i} />
+                ))}
+            </div>
+        </div>
+    );
     if (isError) return <p className="text-center text-red-500 py-20 font-bold text-xl">Error al cargar la información.</p>;
 
     return (

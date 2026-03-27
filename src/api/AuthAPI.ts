@@ -1,6 +1,6 @@
 import { isAxiosError } from "axios";
 import api from "../config/axios";
-import type { ConfirmToken, LoginForm, RegisterForm, UpdatePasswordForm } from "../types";
+import type { ConfirmToken, ForgotPasswordForm, LoginForm, RegisterForm, ResetPasswordForm, UpdatePasswordForm } from "../types";
 
 export async function loginUser(formData: LoginForm) {
     try {
@@ -76,5 +76,37 @@ export async function updatePassword(formData: UpdatePasswordForm) {
         if (isAxiosError(error) && error.response) {
             throw new Error(error.response.data.error);
         }
+    }
+}
+
+export async function forgotPassword(formData: ForgotPasswordForm) {
+    try {
+        const { data } = await api.post('/auth/forgot-password', formData); // Ajusta la ruta
+        return data;
+    } catch (error) {
+        if (isAxiosError(error) && error.response) {
+            throw new Error(error.response.data.error);
+        }
+        throw new Error('Error al enviar el correo de recuperación');
+    }
+}
+
+export async function resetPassword(formData: ResetPasswordForm) {
+    try {
+        // Extraemos el token y las contraseñas del formData
+        const { token, password, confirmPassword } = formData;
+
+        // Inyectamos el token directamente en la URL como espera tu backend
+        const { data } = await api.post(`/auth/reset-password/${token}`, {
+            password,
+            confirmPassword
+        }); 
+        
+        return data;
+    } catch (error) {
+        if (isAxiosError(error) && error.response) {
+            throw new Error(error.response.data.error);
+        }
+        throw new Error('Error al restablecer la contraseña');
     }
 }
