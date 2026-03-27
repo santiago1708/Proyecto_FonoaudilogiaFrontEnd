@@ -1,6 +1,6 @@
 import { isAxiosError } from "axios";
 import api from "../config/axios";
-import type { ConfirmToken, LoginForm, RegisterForm } from "../types";
+import type { ConfirmToken, LoginForm, RegisterForm, UpdatePasswordForm } from "../types";
 
 export async function loginUser(formData: LoginForm) {
     try {
@@ -64,5 +64,17 @@ export async function getUser() {
             throw new Error(error.response.data.error || 'Error al obtener el usuario');
         }
         throw new Error('Hubo un error en el servidor');
+    }
+}
+
+
+export async function updatePassword(formData: UpdatePasswordForm) {
+    try {
+        const { data } = await api.post('/auth/change-password', formData);
+        return data;
+    } catch (error) {
+        if (isAxiosError(error) && error.response) {
+            throw new Error(error.response.data.error);
+        }
     }
 }

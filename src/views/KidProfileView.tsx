@@ -29,6 +29,10 @@ export default function KidProfileView() {
         puntaje: test.puntaje
     })).reverse() || [];
 
+    const dynamicYAxisTicks = Array.from(new Set(chartData.map((item: { puntaje: number }) => item.puntaje)))
+        .sort((a, b) => (a as number) - (b as number)) as number[];
+
+    console.log(chartData)
 
     return (
         <div className="max-w-6xl mx-auto space-y-8">
@@ -64,19 +68,44 @@ export default function KidProfileView() {
                 {chartData.length > 0 ? (
                     <div className="h-80 w-full">
                         <ResponsiveContainer width="100%" height="100%">
-                            <LineChart data={chartData} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
-                                <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
-                                <XAxis dataKey="fecha" stroke="#6b7280" />
+                            <LineChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f3f4f6" />
+
+                                <XAxis
+                                    type='category'
+                                    dataKey="fecha" // <-- CAMBIADO: Antes decía "puntaje", ahora usa la fecha para las etiquetas
+                                    stroke="#6b7280"
+                                    tick={{ fontSize: 12 }}
+                                    padding={{ left: 20, right: 20 }}
+                                    // Esto asegura que si hay muchas evaluaciones, no se encimen los textos
+                                    interval="preserveStartEnd"
+                                />
+
                                 <YAxis
                                     domain={[0, 20]}
+                                    ticks={dynamicYAxisTicks}
                                     stroke="#6b7280"
                                     tick={{ fontSize: 12, fontWeight: 'bold' }}
                                 />
+
                                 <Tooltip
+                                    // El cursor "shadow" (strokeWidth alto) ayuda a seleccionar el área del punto más fácil
+                                    cursor={{ stroke: '#e5e7eb', strokeWidth: 2 }}
                                     contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
                                     labelFormatter={(value) => `Fecha: ${value}`}
                                 />
-                                <Line type="monotone" dataKey="puntaje" stroke="#2563eb" strokeWidth={3} activeDot={{ r: 8 }} />
+
+                                <Line
+                                    type="monotone"
+                                    dataKey="puntaje" // <-- La línea sigue graficando el puntaje
+                                    stroke="#2563eb"
+                                    strokeWidth={3}
+                                    dot={{ r: 4, strokeWidth: 2, fill: '#fff' }}
+                                    activeDot={{ r: 8 }}
+                                    // Agregamos esto para asegurar que cada punto sea independiente
+                                    isAnimationActive={true}
+                                    animationDuration={1000}
+                                />
                             </LineChart>
                         </ResponsiveContainer>
                     </div>
