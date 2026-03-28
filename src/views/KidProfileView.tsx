@@ -203,7 +203,7 @@ export default function KidProfileView() {
                                 {history.map((test: TestHistory) => (
                                     <tr key={test.id} className="hover:bg-gray-50 transition-colors">
                                         <td className="p-4 text-gray-600">{new Date(test.createdAt).toLocaleDateString()}</td>
-                                        <td className="p-4 text-gray-600">{test.edadAlMomento}</td>
+                                        <td className="p-4 text-gray-600">{kid.edadCalculada}</td>
                                         <td className="p-4 font-black text-gray-800">{test.puntaje}</td>
                                         <td className="p-4">
                                             <span className={`px-3 py-1 rounded-full text-xs font-bold ${test.puntaje <= 5 ? 'bg-green-100 text-green-800' :

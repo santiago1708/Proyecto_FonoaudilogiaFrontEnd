@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import AuthLayout from './layouts/AuthLayout';
 import LoginView from './views/LoginView';
 import RegisterView from './views/RegisterView';
@@ -19,11 +19,12 @@ export default function Router() {
     return (
         <BrowserRouter>
             <Routes>
+                <Route path="/" element={<Navigate to="/login" replace />} />
                 {/* Rutas Públicas */}
                 <Route element={<AuthLayout />}>
                     <Route path="/login" element={<LoginView />} />
                     <Route path="/register" element={<RegisterView />} />
-                    <Route path="/auth/confirm-account" element={<ConfirmAccountView />} />
+                    <Route path="/api/auth/confirm-email" element={<ConfirmAccountView />} />
                     <Route path="/auth/forgot-password" element={<ForgotPasswordView />} />
                     <Route path="/auth/reset-password" element={<ResetPasswordView />} />
                 </Route>
