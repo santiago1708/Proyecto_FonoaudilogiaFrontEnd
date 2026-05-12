@@ -74,11 +74,23 @@ export default function AppLayout() {
     return (
         <div className="min-h-screen bg-gray-50">
             {/* Navbar */}
-            <header className="bg-blue-600 shadow-md">
+            <header className="
+                bg-gradient-to-b from-white to-[#0066ff] to-90%
+                sm:bg-gradient-to-r sm:from-white sm:to-[#0066ff] 
+                px-3 py-4 md:px-8 shadow-md
+                ">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
-                    <Link to="/dashboard" className="text-2xl font-black text-white">
-                        Fonoaudiología App
-                    </Link>
+                    {/* Logo */}
+                    <div className="flex items-center gap-4">
+                        <Link to="/dashboard" className="flex items-center">
+                            <img
+                                src="/src/assets/LogoFonoAlerta.png"
+                                alt="Logo FonoAlerta"
+                                className="h-28 w-auto object-contain"
+                                style={{ maxWidth: '230px' }}
+                            />
+                        </Link>
+                    </div>
 
                     <div className="flex items-center gap-6">
                         {/* AQUI MOSTRAMOS AL USUARIO */}

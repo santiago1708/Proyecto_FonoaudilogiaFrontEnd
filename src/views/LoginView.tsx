@@ -30,8 +30,16 @@ export default function LoginView() {
 
     return (
         <>
-            <h1 className="text-3xl font-black text-center text-gray-800">Iniciar Sesión</h1>
-            <p className="text-center text-gray-500 mt-2 mb-8">Administra las evaluaciones de fonoaudiología</p>
+            <h1 className="text-3xl font-black text-center text-gray-800">Iniciar Sesión en</h1>
+            <div className="flex justify-center mt-4">
+                <img
+                    src="/src/assets/LogoFonoAlerta.png"
+                    alt="Logo FonoAlerta"
+                    className="h-28 w-auto object-contain"
+                    style={{ maxWidth: '230px' }}
+                />
+            </div>
+            <p className="text-center text-gray-500 mt-4 mb-8"></p>
 
             <form onSubmit={handleSubmit(handleLogin)} className="space-y-5">
                 <div className="flex flex-col gap-2">
