@@ -33,7 +33,7 @@ export default function LoginView() {
             <h1 className="text-3xl font-black text-center text-gray-800">Iniciar Sesión en</h1>
             <div className="flex justify-center mt-4">
                 <img
-                    src="/src/assets/LogoFonoAlerta.png"
+                    src="/LogoFonoAlerta.png"
                     alt="Logo FonoAlerta"
                     className="h-28 w-auto object-contain"
                     style={{ maxWidth: '230px' }}

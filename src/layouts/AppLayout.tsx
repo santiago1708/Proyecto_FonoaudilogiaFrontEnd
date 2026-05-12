@@ -84,7 +84,7 @@ export default function AppLayout() {
                     <div className="flex items-center gap-4">
                         <Link to="/dashboard" className="flex items-center">
                             <img
-                                src="/src/assets/LogoFonoAlerta.png"
+                                src="/LogoFonoAlerta.png"
                                 alt="Logo FonoAlerta"
                                 className="h-28 w-auto object-contain"
                                 style={{ maxWidth: '230px' }}
