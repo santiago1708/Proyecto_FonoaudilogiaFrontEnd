@@ -39,7 +39,7 @@ export default function AddKidView() {
 
             <div className="bg-white shadow-sm border rounded-2xl p-8">
                 <form onSubmit={handleSubmit(handleRegisterKid)} className="space-y-6">
-
+                    
                     <div className="flex flex-col gap-2">
                         <label className="font-bold text-gray-700">Nombre Completo</label>
                         <input
