@@ -81,9 +81,7 @@ export default function AddKidView() {
                         <label className="font-bold text-gray-700">¿Se encuentra escolarizado?</label>
                         <select
                             className="p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
-                            {...register('escolarizacion', {
-                                setValueAs: v => v === 'true',
-                            })}
+                            {...register('escolarizacion')}
                             defaultValue=""
                         >
                             <option value="" disabled>-- Seleccionar --</option>

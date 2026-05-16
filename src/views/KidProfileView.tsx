@@ -93,7 +93,7 @@ export default function KidProfileView() {
                     </Link>
                     <h1 className="text-3xl font-black text-gray-800">{kid?.nombre}</h1>
                     <p className="text-gray-500 mt-1">
-                        Edad actual: <span className="font-bold">{kid?.edadCalculada}</span> | Escolarizado: <span className="font-bold">{kid?.escolarizado ? 'Sí' : 'No'}</span>
+                        Edad actual: <span className="font-bold">{kid?.edadCalculada}</span> | Escolarizado: <span className="font-bold">{kid?.escolarizacion ? 'Sí' : 'No'}</span>
                         {kid.observaciones && (
                             <span className="block mt-2 text-sm text-gray-600">
                                 Observaciones: {kid.observaciones}
