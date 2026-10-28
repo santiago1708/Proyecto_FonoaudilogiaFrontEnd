@@ -30,55 +30,30 @@ export default function LoginView() {
 
     return (
         <>
-            <h1 className="text-3xl font-black text-center text-gray-800">Iniciar Sesión en</h1>
-            <div className="flex justify-center mt-4">
-                <img
-                    src="/LogoFonoAlerta.png"
-                    alt="Logo FonoAlerta"
-                    className="h-28 w-auto object-contain"
-                    style={{ maxWidth: '230px' }}
-                />
-            </div>
-            <p className="text-center text-gray-500 mt-4 mb-8"></p>
+            <h1 className="font-mano text-4xl">Iniciar sesión</h1>
+            <p className="mt-1 text-tinta-suave">Ingresa con el correo con el que te registraste.</p>
 
-            <form onSubmit={handleSubmit(handleLogin)} className="space-y-5">
+            <form onSubmit={handleSubmit(handleLogin)} className="mt-6 space-y-5" noValidate>
                 <div className="flex flex-col gap-2">
-                    <label className="font-bold text-gray-700">Email</label>
-                    <input
-                        type="email"
-                        placeholder="ejemplo@correo.com"
-                        className="p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        {...register('email')}
-                    />
+                    <label htmlFor="email" className="etiqueta">Correo electrónico</label>
+                    <input id="email" type="email" autoComplete="email" placeholder="ejemplo@correo.com" className="campo" {...register('email')} />
                     {errors.email && <ErrorMessage>{errors.email.message}</ErrorMessage>}
                 </div>
 
                 <div className="flex flex-col gap-2">
-                    <label className="font-bold text-gray-700">Contraseña</label>
-                    <input
-                        type="password"
-                        placeholder="Tu contraseña"
-                        className="p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        {...register('password')}
-                    />
+                    <label htmlFor="password" className="etiqueta">Contraseña</label>
+                    <input id="password" type="password" autoComplete="current-password" placeholder="Tu contraseña" className="campo" {...register('password')} />
                     {errors.password && <ErrorMessage>{errors.password.message}</ErrorMessage>}
                 </div>
 
-                <input
-                    type="submit"
-                    value={isPending ? 'Cargando...' : 'Iniciar Sesión'}
-                    disabled={isPending}
-                    className="bg-blue-600 hover:bg-blue-700 text-white w-full p-3 rounded-lg font-bold cursor-pointer transition-colors disabled:opacity-50"
-                />
+                <button type="submit" disabled={isPending} className="boton w-full">
+                    {isPending ? 'Ingresando…' : 'Iniciar sesión'}
+                </button>
             </form>
 
-            <nav className="mt-6 text-center">
-                <Link to="/register" className="text-gray-500 hover:text-blue-600">
-                    ¿No tienes cuenta? Crea una aquí
-                </Link>
-                <Link to="/auth/forgot-password" className="text-sm text-gray-500 hover:text-blue-600 block mt-1">
-                    ¿Olvidaste tu contraseña?
-                </Link>
+            <nav className="mt-6 space-y-2 text-center text-tinta-suave">
+                <Link to="/register" className="block hover:text-brand-700">¿No tienes cuenta? <span className="font-bold text-brand-700">Crea una aquí</span></Link>
+                <Link to="/auth/forgot-password" className="block text-sm hover:text-brand-700">¿Olvidaste tu contraseña?</Link>
             </nav>
         </>
     );

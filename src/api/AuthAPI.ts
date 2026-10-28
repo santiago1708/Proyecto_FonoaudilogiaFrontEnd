@@ -74,8 +74,9 @@ export async function updatePassword(formData: UpdatePasswordForm) {
         return data;
     } catch (error) {
         if (isAxiosError(error) && error.response) {
-            throw new Error(error.response.data.error);
+            throw new Error(error.response.data.errors?.[0]?.msg || error.response.data.error);
         }
+        throw new Error('Error al cambiar la contraseña');
     }
 }
 

@@ -13,7 +13,8 @@ export const RegisterSchema = z.object({
     email: z.string().email('El correo no es válido'),
     password: z.string().min(8, 'La contraseña debe tener mínimo 8 caracteres'),
     password_confirmation: z.string(),
-    parentesco: z.enum(['Madre', 'Padre', 'Cuidador', 'Profesional'], 'Selecciona un parentesco válido')
+    parentesco: z.enum(['Madre', 'Padre', 'Cuidador', 'Profesional'], 'Selecciona quién eres'),
+    aceptaPrivacidad: z.literal(true, 'Debes aceptar la política de privacidad para crear la cuenta')
 }).refine((data) => data.password === data.password_confirmation, {
     message: "Las contraseñas no coinciden",
     path: ["password_confirmation"]
@@ -41,28 +42,125 @@ export type KidRegistrationForm = z.infer<typeof KidRegistrationSchema>;
 
 
 export type Kid = {
-    id: number; // o string, dependiendo de cómo lo tengas en tu base de datos
+    id: number;
     name: string;
     fechaNacimiento: string;
     genero: string;
     escolarizacion: boolean;
     observaciones?: string;
-    edadCalculada?: string; // Este es el campo virtual que creaste en tu backend genial
+    edadCalculada?: string;
+    edadEnMeses?: number;
 };
+
+export type Nivel = 'esperado' | 'leve' | 'alto';
+export type Perfil = 'familia' | 'profesional';
 
 export type TestHistory = {
     id: number;
+    kidId?: number;
     puntaje: number;
     clasificacion: string;
-    edadAlMomento: string;
+    nivel?: Nivel | null;
+    fechaRealizacion: string;
+    edadTexto?: string | null;
+    personaResponde?: string | null;
+    tiempoPantallas?: string | null;
+    progreso?: string | null;
     createdAt: string;
+    test?: { name: string; rango?: string | null };
+    kid?: { id: number; name: string };
 };
+
+export type RespuestaDetalle = {
+    idPregunta: number;
+    pregunta: string;
+    respuesta: string;
+    puntaje: number;
+};
+
+export type ActividadFamilia = {
+    nombre: string;
+    objetivo: string;
+    pasos: string[];
+    materiales: string;
+    recomendacion: string;
+};
+
+export type ActividadProfesional = {
+    nombre: string;
+    objetivo: string;
+    procedimiento: string[];
+    aspectos: string;
+    orientacionFamiliar?: string;
+    orientacionProfesional?: string;
+    precaucion?: string;
+};
+
+export type RecomendacionPorRespuesta = RespuestaDetalle & { recomendacion: string };
+
+export type BloqueRecomendaciones = {
+    perfil: Perfil;
+    nivel: Nivel;
+    mensaje: string;
+    porRespuesta?: RecomendacionPorRespuesta[];
+    aviso: string;
+    objetivo?: string;
+    recomendaciones?: string[];
+    actividadesFamilia?: ActividadFamilia[];
+    introduccion?: string;
+    actividadesProfesional?: ActividadProfesional[];
+};
+
+export type Evaluacion = TestHistory & {
+    mensaje: string;
+    respuestas: RespuestaDetalle[];
+    indicadores: RespuestaDetalle[];
+    perfilUsuario: Perfil;
+    mensajeProgreso: string;
+    recomendaciones: BloqueRecomendaciones;
+};
+
+// === Administración ===
+export type OpcionAdmin = { respuesta: string; puntaje: number };
+export type PreguntaAdmin = { id: number; pregunta: string; opciones: OpcionAdmin[]; recomendacion?: string };
+export type TestAdmin = {
+    id: number;
+    clave: string | null;
+    name: string;
+    rango: string | null;
+    minMeses: number;
+    maxMeses: number;
+    activo: boolean;
+    preguntas: PreguntaAdmin[];
+    evaluaciones: number;
+};
+export type RecomendacionNivelAdmin = { id: number; nivel: Nivel; perfil: Perfil; objetivo: string | null; items: string[] };
+export type ActividadAdmin = {
+    id: number;
+    clave: string;
+    perfil: Perfil;
+    nombre: string;
+    objetivo: string;
+    pasos: string[];
+    materiales?: string | null;
+    recomendacion?: string | null;
+    aspectos?: string | null;
+    orientacionFamiliar?: string | null;
+    orientacionProfesional?: string | null;
+    precaucion?: string | null;
+    orden: number;
+};
+export type Contacto = { id: number; nombre: string; telefono: string; descripcion?: string | null; activo?: boolean };
+export type Administrador = { id: number; name: string; email: string };
+
+export type EvaluacionConRecomendaciones = TestHistory & { recomendaciones: BloqueRecomendaciones | null };
 
 export const UserSchema = z.object({
     id: z.number().or(z.string()),
     name: z.string(),
     email: z.string(),
-    parentesco: z.string()
+    parentesco: z.string(),
+    rol: z.enum(['usuario', 'admin']).optional()
 });
 
 export type User = z.infer<typeof UserSchema>;

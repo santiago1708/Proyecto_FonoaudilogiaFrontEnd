@@ -1,85 +1,125 @@
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
+import { ClipboardCheck, BarChart3, Lightbulb, Puzzle, CalendarDays, Plus, ArrowRight } from 'lucide-react';
 import { getKids } from '../api/KidAPI';
 import type { Kid } from '../types';
 import KidCardSkeleton from '../components/KidCardSkeleton';
+import WhatsAppContacto from '../components/WhatsAppContacto';
+import { useUsuario } from '../hooks/useUsuario';
 
 export default function DashboardView() {
-    // useQuery se encarga de llamar a la API, manejar el loading y guardar los datos en caché
-    const { data: kids, isLoading, isError } = useQuery({
-        queryKey: ['kids'], // Una llave única para la caché
-        queryFn: getKids
-    });
+    const { user, esProfesional } = useUsuario();
+    const { data: kids, isLoading, isError } = useQuery<Kid[]>({ queryKey: ['kids'], queryFn: getKids });
 
-    if (isLoading) return (
-        <div className="space-y-6">
-            <h1 className="text-4xl font-black text-gray-800">Mis Pacientes / Hijos</h1>
-            <p className="text-xl font-light text-gray-500">Cargando tu lista de pacientes...</p>
-            
-            {/* Grid de Skeletons */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
-                {/* Creamos un array de 6 elementos vacíos solo para iterar y mostrar 6 tarjetas */}
-                {[...Array(6)].map((_, i) => (
-                    <KidCardSkeleton key={i} />
-                ))}
-            </div>
-        </div>
-    );
-    if (isError) return <p className="text-center text-red-500 py-20 font-bold text-xl">Error al cargar la información.</p>;
+    const quien = esProfesional ? 'sus pacientes' : 'tu hijo(a)';
+    const accesos = [
+        { to: '/evaluacion', titulo: 'Evaluación', texto: `Responde el cuestionario según la edad de ${quien}.`, icono: ClipboardCheck, fondo: 'bg-menta-suave', acento: 'bg-menta' },
+        { to: '/resultados', titulo: 'Resultados', texto: 'Conoce el nivel de riesgo y el estado del desarrollo.', icono: BarChart3, fondo: 'bg-brand-100', acento: 'bg-brand-500' },
+        { to: '/recomendaciones', titulo: 'Recomendaciones', texto: 'Recibe orientación según el resultado.', icono: Lightbulb, fondo: 'bg-sol-suave', acento: 'bg-sol' },
+        { to: '/actividades', titulo: 'Actividades', texto: esProfesional ? 'Estrategias de observación y orientación por edad.' : 'Ejercicios para hacer en casa o en el aula.', icono: Puzzle, fondo: 'bg-cielo-suave', acento: 'bg-cielo' },
+        { to: '/seguimiento', titulo: 'Seguimiento', texto: `Visualiza el progreso de ${quien} en el tiempo.`, icono: CalendarDays, fondo: 'bg-rosa-suave', acento: 'bg-rosa' }
+    ];
 
     return (
-        <>
-            <div className="flex flex-col md:flex-row justify-between items-center mb-10 gap-4">
-                <div>
-                    <h1 className="text-3xl font-black text-gray-800">Mis Pacientes / Hijos</h1>
-                    <p className="text-gray-500 mt-1">Administra los perfiles y evaluaciones</p>
-                </div>
-                
-                <Link 
-                    to="/dashboard/add-kid" 
-                    className="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg transition-colors w-full md:w-auto text-center"
-                >
-                    + Registrar Nuevo Niño
-                </Link>
-            </div>
+        <div className="space-y-10">
+            <section>
+                <p className="font-mano text-3xl">¡Hola, {user?.name?.split(' ')[0]}!</p>
+                <p className="mt-1 max-w-xl text-tinta-suave">
+                    {esProfesional
+                        ? 'Aquí encontrarás herramientas de apoyo para la identificación temprana de señales de alerta en el lenguaje.'
+                        : 'Gracias por ser parte de este proceso. Aquí encontrarás herramientas para acompañar el desarrollo del lenguaje de tu niño o niña.'}
+                </p>
+            </section>
 
-            {/* Si el backend nos devuelve un arreglo vacío, mostramos el mensaje original */}
-            {kids?.length === 0 ? (
-                <div className="bg-white shadow-sm border rounded-2xl p-10 text-center">
-                    <p className="text-gray-500 text-lg">
-                        Aún no tienes niños registrados. Comienza agregando uno para realizar evaluaciones.
-                    </p>
+            {/* Portada */}
+            <section className="relative overflow-hidden rounded-[2rem] bg-white shadow-suave">
+                <div className="grid items-center gap-6 p-6 sm:p-10 md:grid-cols-[1.1fr_1fr]">
+                    <div>
+                        <h1 className="font-mano text-5xl leading-[0.95] sm:text-6xl">Cada palabra cuenta</h1>
+                        <p className="mt-4 max-w-md text-lg text-tinta-suave">
+                            Detectar a tiempo puede hacer la diferencia en su desarrollo.
+                        </p>
+                        <Link to="/evaluacion" className="boton mt-6">
+                            Comenzar evaluación
+                            <ArrowRight className="h-5 w-5" aria-hidden />
+                        </Link>
+                    </div>
+                    <div className="relative mx-auto w-full max-w-sm">
+                        <div className="absolute inset-6 rounded-full bg-brand-100" aria-hidden />
+                        <img src="/ilustracion-nino.png" alt="" className="relative w-full" />
+                    </div>
                 </div>
-            ) : (
-                /* Si hay niños, iteramos sobre ellos y creamos una tarjeta para cada uno */
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {kids?.map((kid: Kid) => (
-                        <div key={kid.id} className="bg-white shadow-sm border rounded-2xl p-6 hover:shadow-md transition-shadow flex flex-col justify-between">
-                            <div>
-                                <h2 className="text-xl font-bold text-gray-800">{kid.name}</h2>
-                                <p className="text-gray-500 mt-2 text-sm">
-                                    <span className="font-bold">Genero:</span> {kid.genero}
-                                </p>
-                                {/* Si tu backend manda la edad calculada, se mostrará aquí */}
-                                {kid.edadCalculada && (
-                                    <p className="text-gray-500 mt-1 text-sm">
-                                        <span className="font-bold">Edad:</span> {kid.edadCalculada}
-                                    </p>
-                                )}
-                            </div>
-                            
-                            <div className="mt-6 border-t pt-4">
-                                <Link 
-                                    to={`/dashboard/kid/${kid.id}`}
-                                    className="text-blue-600 hover:text-blue-800 font-bold block text-center bg-blue-50 py-2 rounded-lg"
-                                >
-                                    Ver Perfil y Evaluaciones &rarr;
-                                </Link>
-                            </div>
-                        </div>
+            </section>
+
+            {/* Accesos rápidos */}
+            <section aria-labelledby="que-hacer">
+                <h2 id="que-hacer" className="titulo-seccion mb-4">¿Qué quieres hacer hoy?</h2>
+                <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-5">
+                    {accesos.map(({ to, titulo, texto, icono: Icono, fondo, acento }) => (
+                        <Link key={to} to={to} className={`group flex flex-col rounded-3xl ${fondo} p-5 transition-transform hover:-translate-y-0.5`}>
+                            <span className={`grid h-14 w-14 place-items-center rounded-full ${acento} text-white`}>
+                                <Icono className="h-7 w-7" aria-hidden />
+                            </span>
+                            <h3 className="mt-4 hyphens-auto text-base font-extrabold xl:text-lg">{titulo}</h3>
+                            <p className="mt-1 hidden flex-1 text-sm text-tinta-suave sm:block">{texto}</p>
+                            <ArrowRight className="mt-4 h-5 w-5 text-tinta-suave group-hover:text-tinta" aria-hidden />
+                        </Link>
                     ))}
                 </div>
-            )}
-        </>
+            </section>
+
+            {/* Niños registrados */}
+            <section aria-labelledby="mis-ninos">
+                <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
+                    <h2 id="mis-ninos" className="titulo-seccion">{esProfesional ? 'Mis pacientes' : 'Mis niños'}</h2>
+                    <Link to="/dashboard/add-kid" className="boton-secundario">
+                        <Plus className="h-5 w-5" aria-hidden />
+                        Registrar niño o niña
+                    </Link>
+                </div>
+
+                {isLoading && (
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+                        {[...Array(3)].map((_, i) => <KidCardSkeleton key={i} />)}
+                    </div>
+                )}
+                {isError && <p className="tarjeta text-rosa-fuerte">No se pudo cargar la lista. Recarga la página para intentarlo de nuevo.</p>}
+                {kids && kids.length === 0 && (
+                    <div className="tarjeta text-center">
+                        <p className="text-tinta-suave">Aún no hay perfiles registrados. Registra uno para hacer la primera evaluación.</p>
+                    </div>
+                )}
+                {kids && kids.length > 0 && (
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+                        {kids.map(kid => (
+                            <Link key={kid.id} to={`/dashboard/kid/${kid.id}`} className="tarjeta flex items-center gap-4 hover:ring-2 hover:ring-brand-200">
+                                <span className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-brand-100 font-mano text-2xl text-brand-700">
+                                    {kid.name.charAt(0).toUpperCase()}
+                                </span>
+                                <div className="min-w-0 flex-1">
+                                    <p className="truncate text-lg font-extrabold">{kid.name}</p>
+                                    <p className="text-sm text-tinta-suave">{kid.edadCalculada} · {kid.genero}</p>
+                                </div>
+                                <ArrowRight className="h-5 w-5 text-tinta-tenue" aria-hidden />
+                            </Link>
+                        ))}
+                    </div>
+                )}
+            </section>
+
+            <section className="grid gap-4 lg:grid-cols-2">
+                <div className="flex items-center gap-5 rounded-3xl bg-menta-suave p-6">
+                    <img src="/ilustracion-nino.png" alt="" className="hidden h-24 w-auto sm:block" />
+                    <div>
+                        <h3 className="font-mano text-2xl">¿Sabías que…?</h3>
+                        <p className="text-tinta-suave">La sobreexposición a pantallas puede influir en el desarrollo del lenguaje. Conversar, jugar y leer juntos lo fortalece.</p>
+                        <Link to="/recomendaciones" className="mt-2 inline-block font-bold text-menta-fuerte underline-offset-4 hover:underline">
+                            Ver recomendaciones
+                        </Link>
+                    </div>
+                </div>
+                <WhatsAppContacto variante="tarjeta" />
+            </section>
+        </div>
     );
 }

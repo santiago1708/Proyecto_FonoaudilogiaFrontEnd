@@ -1,13 +1,24 @@
 import { isAxiosError } from "axios";
 import api from "../config/axios";
-import type { KidRegistrationForm } from "../types";
+import type { Contacto, Evaluacion, EvaluacionConRecomendaciones, KidRegistrationForm, TestHistory } from "../types";
+
+// Convierte el error de axios en un mensaje legible para el usuario
+export function mensajeDeError(error: unknown, porDefecto: string): never {
+    if (isAxiosError(error) && error.response) {
+        const data = error.response.data;
+        if (data?.errors?.length) throw new Error(data.errors[0].msg);
+        if (data?.error) throw new Error(data.error);
+        if (data?.message) throw new Error(data.message);
+    }
+    throw new Error(porDefecto);
+}
 
 export async function registerKid(formData: KidRegistrationForm) {
     try {
-        // Transformamos el string ("true"/"false") a un booleano real (true/false)
+        // El <select> entrega "true"/"false"; el backend espera un booleano
         const payload = {
             ...formData,
-            escolarizado: formData.escolarizacion === 'true'
+            escolarizacion: formData.escolarizacion === 'true'
         };
 
         // Enviamos el payload corregido al backend
@@ -42,7 +53,7 @@ export async function getKids() {
 
 export async function getKidById(id: string) {
     try {
-        const { data } = await api.get(`/Kid/get-kid/${id}`);
+        const { data } = await api.get(`/kid/get-kid/${id}`);
         return data;
     } catch (error) {
         if (isAxiosError(error) && error.response) {
@@ -67,26 +78,59 @@ export async function getKidHistory(id: string) {
 
 export type RespuestaItem = {
     idPregunta: number;
-    respuestaSeleccionada: string;
-    puntaje: number;
+    respuesta: string;
 };
 
 export type EvaluationPayload = {
     kidId: string;
     testId: string;
+    personaResponde: string;
+    tiempoPantallas: string;
     respuestas: RespuestaItem[];
 };
 
-export async function submitEvaluation({ kidId, testId, respuestas }: EvaluationPayload) {
+export async function submitEvaluation({ kidId, testId, ...body }: EvaluationPayload) {
     try {
-        // Hacemos el POST a tu ruta exacta
-        const { data } = await api.post(`/evaluacion/kid/${kidId}/test/${testId}`, { respuestas });
+        const { data } = await api.post<{ evaluacion: Evaluacion }>(`/evaluacion/kid/${kidId}/test/${testId}`, body);
+        return data.evaluacion;
+    } catch (error) {
+        mensajeDeError(error, 'Error al guardar la evaluación');
+    }
+}
+
+export async function getEvaluation(kidId: string, evaluacionId: string) {
+    try {
+        const { data } = await api.get<{ niño: { id: number; name: string }; evaluacion: Evaluacion }>(`/evaluacion/kid/${kidId}/${evaluacionId}`);
         return data;
     } catch (error) {
-        if (isAxiosError(error) && error.response) {
-            throw new Error(error.response.data.error || 'Error al guardar la evaluación');
-        }
-        throw new Error('Hubo un error en el servidor');
+        mensajeDeError(error, 'Error al obtener la evaluación');
+    }
+}
+
+export async function getRecentEvaluations() {
+    try {
+        const { data } = await api.get<TestHistory[]>('/evaluacion/recientes');
+        return data;
+    } catch (error) {
+        mensajeDeError(error, 'Error al obtener los resultados');
+    }
+}
+
+export async function getKidRecommendations(kidId: string) {
+    try {
+        const { data } = await api.get<{ niño: { id: number; name: string }; evaluaciones: EvaluacionConRecomendaciones[] }>(`/evaluacion/recomendaciones/kid/${kidId}`);
+        return data;
+    } catch (error) {
+        mensajeDeError(error, 'Error al obtener las recomendaciones');
+    }
+}
+
+export async function getContactos() {
+    try {
+        const { data } = await api.get<Contacto[]>('/contactos');
+        return data;
+    } catch (error) {
+        mensajeDeError(error, 'Error al obtener los contactos');
     }
 }
 
