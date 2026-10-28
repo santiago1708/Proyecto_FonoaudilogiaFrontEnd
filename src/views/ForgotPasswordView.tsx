@@ -24,17 +24,17 @@ export default function ForgotPasswordView() {
     });
 
     return (
-        <div className="bg-white p-8 rounded-2xl shadow-xl border w-full max-w-md mx-auto">
-            <h1 className="text-3xl font-black text-gray-800 text-center mb-2">Recuperar Cuenta</h1>
-            <p className="text-gray-500 text-center mb-8">Ingresa tu correo y te enviaremos un código para restablecer tu contraseña.</p>
+        <div className="bg-white p-8 rounded-2xl shadow-xl border border-brand-100 w-full max-w-md mx-auto">
+            <h1 className="font-mano text-4xl mb-2">Recuperar contraseña</h1>
+            <p className="text-tinta-suave text-center mb-8">Ingresa tu correo y te enviaremos un código para restablecer tu contraseña.</p>
 
             <form onSubmit={handleSubmit((data) => mutate(data))} className="space-y-6" noValidate>
                 <div className="flex flex-col gap-2">
-                    <label className="font-bold text-sm text-gray-600 uppercase">Email Registrado</label>
+                    <label className="font-bold text-sm text-tinta-suave ">Email Registrado</label>
                     <input
                         type="email"
                         placeholder="tu@email.com"
-                        className="p-3 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+                        className="p-3 border border-brand-100 border-brand-100 rounded-xl outline-none focus:ring-2 focus:ring-brand-500 transition-colors"
                         {...register("email")}
                     />
                     {errors.email && <ErrorMessage>{errors.email.message}</ErrorMessage>}
@@ -44,12 +44,12 @@ export default function ForgotPasswordView() {
                     type="submit"
                     value={isPending ? "Enviando instrucciones..." : "Enviar Código"}
                     disabled={isPending}
-                    className="bg-blue-600 hover:bg-blue-700 text-white w-full p-3 rounded-xl font-bold cursor-pointer transition-colors disabled:opacity-50"
+                    className="bg-brand-600 hover:bg-brand-700 text-white w-full p-3 rounded-xl font-bold cursor-pointer transition-colors disabled:opacity-50"
                 />
             </form>
 
             <nav className="mt-8 text-center">
-                <Link to="/login" className="text-gray-500 hover:text-blue-600 font-medium transition-colors">
+                <Link to="/login" className="text-tinta-suave hover:text-brand-600 font-medium transition-colors">
                     ¿Ya la recordaste? Iniciar Sesión
                 </Link>
             </nav>

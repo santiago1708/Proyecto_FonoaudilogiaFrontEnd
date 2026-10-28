@@ -49,7 +49,7 @@ export default function EditKidView() {
         mutationFn: updateKid,
         onError: (error: Error) => toast.error(error.message),
         onSuccess: () => {
-            toast.success('¡Paciente actualizado correctamente!');
+            toast.success('Perfil actualizado');
             // Refrescamos los datos en caché para que el perfil muestre lo nuevo
             queryClient.invalidateQueries({ queryKey: ['kid', id] });
             queryClient.invalidateQueries({ queryKey: ['kids'] });
@@ -61,26 +61,26 @@ export default function EditKidView() {
         mutate({ id: +id!, formData });
     };
 
-    if (isLoading) return <p className="text-center py-20 font-bold text-xl text-gray-500">Cargando datos del paciente...</p>;
+    if (isLoading) return <p className="text-center py-20 font-bold text-xl text-tinta-suave">Cargando…</p>;
 
     return (
         <div className="max-w-3xl mx-auto space-y-6">
-            <Link to={`/dashboard/kid/${id}`} className="text-blue-600 hover:underline font-semibold block mb-4">
+            <Link to={`/dashboard/kid/${id}`} className="text-brand-600 hover:underline font-semibold block mb-4">
                 &larr; Volver al Perfil
             </Link>
 
-            <div className="bg-white p-8 rounded-2xl shadow-sm border">
-                <h1 className="text-3xl font-black text-gray-800 mb-2">Editar Paciente</h1>
-                <p className="text-gray-500 mb-8">Actualiza la información de <span className="font-bold text-blue-600">{kid?.nombre}</span>.</p>
+            <div className="bg-white p-8 rounded-2xl shadow-sm border border-brand-100">
+                <h1 className="titulo-pagina mb-2">Editar perfil</h1>
+                <p className="text-tinta-suave mb-8">Actualiza la información de <span className="font-bold text-brand-600">{kid?.nombre}</span>.</p>
 
                 <form onSubmit={handleSubmit(handleEditKid)} className="space-y-6">
                     {/* Campo: Nombre */}
                     <div className="space-y-2">
-                        <label className="font-bold text-sm uppercase text-gray-600">Nombre Completo</label>
+                        <label className="font-bold text-sm text-tinta-suave">Nombre Completo</label>
                         <input
                             type="text"
                             placeholder="Ej. Juan Pérez"
-                            className="w-full p-3 border border-gray-400 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                            className="w-full p-3 border border-brand-100 border-gray-400 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none transition-all"
                             {...register('name')}
                         />
                         {errors.name && <ErrorMessage>{errors.name.message}</ErrorMessage>}
@@ -88,19 +88,19 @@ export default function EditKidView() {
 
                     {/* Campo: Fecha de Nacimiento */}
                     <div className="space-y-2">
-                        <label className="font-bold text-sm uppercase text-gray-600">Fecha de Nacimiento</label>
+                        <label className="font-bold text-sm text-tinta-suave">Fecha de Nacimiento</label>
                         <input
                             type="date"
-                            className="w-full p-3 border border-gray-400 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                            className="w-full p-3 border border-brand-100 border-gray-400 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none transition-all"
                             {...register('fechaNacimiento')}
                         />
                         {errors.fechaNacimiento && <ErrorMessage>{errors.fechaNacimiento.message}</ErrorMessage>}
                     </div>
 
                     <div className="space-y-2 flex flex-col gap-2">
-                        <label className="font-bold text-gray-700">Genero</label>
+                        <label className="font-bold text-tinta">Genero</label>
                         <select
-                            className="p-3 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                            className="p-3 border border-brand-100 border-gray-400 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white"
                             {...register('genero')}
                             defaultValue=""
                         >
@@ -110,34 +110,34 @@ export default function EditKidView() {
                         </select>
                     </div>
                     {/* Campo: Escolarizado (Checkbox o Select) */}
-                    <div className="space-y-2 flex items-center gap-3 bg-gray-50 p-4 rounded-xl border border-gray-100 mt-4">
+                    <div className="space-y-2 flex items-center gap-3 bg-lavanda p-4 rounded-xl border border-brand-100 border-brand-100 mt-4">
                         <input
                             type="checkbox"
                             id="escolarizacion"
-                            className="w-5 h-5 text-blue-600 rounded focus:ring-blue-500 cursor-pointer"
+                            className="w-5 h-5 text-brand-600 rounded focus:ring-brand-500 cursor-pointer"
                             {...register('escolarizacion')}
                         />
-                        <label htmlFor="escolarizacion" className="font-bold text-gray-700 cursor-pointer">
+                        <label htmlFor="escolarizacion" className="font-bold text-tinta cursor-pointer">
                             ¿El niño se encuentra escolarizado actualmente?
                         </label>
                     </div>
 
                     <div className="flex flex-col gap-2">
-                        <label className="font-bold text-gray-700">Observaciones (Opcional)</label>
+                        <label className="font-bold text-tinta">Observaciones (Opcional)</label>
                         <textarea
                             placeholder="Algún detalle médico, conductual o antecedente relevante..."
-                            className="p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 h-24 resize-none"
+                            className="p-3 border border-brand-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500 h-24 resize-none"
                             {...register('observaciones')}
                         />
                     </div>
 
                     {/* Botón Guardar */}
-                    <div className="pt-6 border-t border-gray-100 mt-8">
+                    <div className="pt-6 border-t border-brand-100 mt-8">
                         <input
                             type="submit"
                             value={isPending ? 'Guardando cambios...' : 'Guardar Cambios'}
                             disabled={isPending}
-                            className="bg-blue-600 hover:bg-blue-700 text-white w-full p-4 rounded-xl font-bold cursor-pointer transition-colors disabled:opacity-50 text-lg shadow-md"
+                            className="bg-brand-600 hover:bg-brand-700 text-white w-full p-4 rounded-xl font-bold cursor-pointer transition-colors disabled:opacity-50 text-lg shadow-md"
                         />
                     </div>
                 </form>
